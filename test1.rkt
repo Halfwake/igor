@@ -14,13 +14,13 @@
   (fridge-door-open fridge))
 
 (define-routine fridge-routine fridge message-value state alarm sender
-  (on-alarm 'bad-sender-value
+  (on-alarm 'bad-sender-value _
     (recurse state null))
-  (on 'open
+  (on 'open _
     (recurse (fridge-open state)))
-  (on 'close
+  (on 'close _
     (recurse (fridge-close state)))
-  (on 'open?
+  (on 'open? _
     (send (fridge-open? state))
     (recurse state)))
 

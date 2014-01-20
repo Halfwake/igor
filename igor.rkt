@@ -19,14 +19,16 @@
       [3 `(recurse-procedure ,(second recurse-form) ,(third recurse-form))])) ;; Should give useful error message if wrong form length.
   (define (compile-on-form-with-send-and-recurse forms)
     (define match-value (second forms))
-    (define body (drop forms 2))
+    (define sub-match-value (third forms))
+    (define body (drop forms 3))
     (define send-forms (filter (compose (curry eq? 'send) first)
                                body))
     (define recurse-forms (filter (compose (curry eq? 'recurse) first)
                                   body))
     `[,match-value
-      ,@(append (map compile-send-form send-forms)
-                (map compile-recurse-form recurse-forms))])
+      (match-let ([,sub-match-value ,message-value-id])
+        ,@(append (map compile-send-form send-forms)
+                  (map compile-recurse-form recurse-forms)))])
   (define body (drop top-form 7)) ;; All forms should be pair? , all forms should start with 'recurse or 'send ?
   (define on-forms (filter (compose (curry eq? 'on)
                                     first)
