@@ -10,8 +10,8 @@
 (define (fridge-open old-fridge)
   (struct-copy fridge old-fridge [door-open #t]))
 
-(define (fridge-open? old-fridge)
-  (fridge-door-open old-fridge))
+(define (fridge-open? fridge)
+  (fridge-door-open fridge))
 
 (define-routine fridge-routine fridge message-value state alarm sender
   (on-alarm 'bad-sender-value
