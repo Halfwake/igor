@@ -22,7 +22,7 @@
     (recurse (fridge-close state)))
   (on 'open? _
     (send (fridge-open? state))
-    (recurse state)))
+    (recurse)))
 
 (define f (fridge-routine (fridge #f 0)))
 (send-message f 'open?)

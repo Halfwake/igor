@@ -15,6 +15,7 @@
     `(send-message ,sender-id ,(second send-form)))
   (define (compile-recurse-form recurse-form)
     (match (length recurse-form)
+      [1 `(recurse-procedure ,state-id ,alarm-id)]
       [2 `(recurse-procedure ,(second recurse-form) ,alarm-id)]
       [3 `(recurse-procedure ,(second recurse-form) ,(third recurse-form))])) ;; Should give useful error message if wrong form length.
   (define (compile-on-form-with-send-and-recurse forms)
@@ -37,9 +38,10 @@
                                  body))
   (define compiled-body `(match ,alarm-id
                            ,@(map compile-on-form-with-send-and-recurse on-alarm-forms)
-                           [_ (match ,message-value-id
+                           [null (match ,message-value-id
                                 ,@(map compile-on-form-with-send-and-recurse on-forms)
-                                [_ (recurse-procedure ,state-id 'no-matching-clause)])]))
+                                [_ (recurse-procedure ,state-id 'no-matching-clause)])]
+                           [_ (recurse-procedure ,state-id 'no-matching-alarm-clause)]))
   (datum->syntax stx
                  `(define (,name-id initial-state)
                     (define (recurse-procedure ,state-id ,alarm-id)
