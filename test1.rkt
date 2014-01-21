@@ -13,7 +13,7 @@
 (define (fridge-open? fridge)
   (fridge-door-open fridge))
 
-(define-routine fridge-routine fridge value state alarm sender
+(define-routine fridge-routine fridge type value state alarm sender
   (on-alarm 'bad-sender-value
     [_
      (recurse state null)])
@@ -25,12 +25,12 @@
      (recurse (fridge-close state))])
   (on 'open?
     [_ 
-     (tell (fridge-open? state))
+     (tell 'ok (fridge-open? state))
      (recurse)]))
 
 (define f (fridge-routine (fridge #f 0)))
-(send-message f 'open?)
+(thread-send f (message 'open? null (current-thread)))
 (message-value (thread-receive))
-(send-message f 'open)
-(send-message f 'open?)
+(thread-send f (message 'open null (current-thread)))
+(thread-send f (message 'open? null (current-thread)))
 (message-value (thread-receive))
